@@ -35,6 +35,7 @@ export const useStore = create(
 
       // ─── Config ─────────────────────────────────────────────────────
       config: { ...defaultConfig },
+      configLoaded: false,
 
       // ─── Daily plan ─────────────────────────────────────────────────
       dailyPlan: {
@@ -62,6 +63,7 @@ export const useStore = create(
         set({
           activeProfile: profileId,
           config: { ...defaultConfig },
+          configLoaded: false,
           dailyPlan: { date: today(), tasks: [], downtime_menu: [] },
           habits: [],
           habitLogs: {},
@@ -84,7 +86,8 @@ export const useStore = create(
           .select('*')
           .eq('user_id', uid)
           .single()
-        if (data) set({ config: data })
+        if (data) set({ config: data, configLoaded: true })
+        else set({ configLoaded: true })
       },
 
       saveConfig: async (updates) => {

@@ -7,7 +7,7 @@ import { buildNotificationPayload, shouldFireNow, subscribeToPush } from '../lib
 import { supabase } from '../lib/supabase'
 
 export function usePushNotifications() {
-  const { config, driftCount, dailyPlan, activeProfile, showPulse } = useStore()
+  const { config, driftCount, dailyPlan, activeProfile, showPulse, configLoaded } = useStore()
   const intervalRef = useRef(null)
   const lastFiredRef = useRef(null)
 
@@ -89,12 +89,13 @@ export function usePushNotifications() {
   }
 
   useEffect(() => {
+    if (!configLoaded) return   // wait for real config before scheduling
     setupPush()
     startScheduler()
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [config, driftCount, dailyPlan, activeProfile])
+  }, [config, driftCount, dailyPlan, activeProfile, configLoaded])
 
   const requestPermission = async () => {
     const permission = await Notification.requestPermission()
