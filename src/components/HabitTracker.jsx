@@ -137,12 +137,11 @@ function isLogged(metric_type, log) {
 
 // ─── MANAGE VIEW ─────────────────────────────────────────────────────────────
 function ManageHabits({ onDone }) {
-  const { habits, loadHabits } = useStore()
+  const { habits, activeProfile } = useStore()
   const [drafts, setDrafts] = useState(
     habits.map(h => ({ ...h }))
   )
   const [saving, setSaving] = useState(false)
-  const { supabase, USER_ID } = useSupabase()
 
   const addDraft = () => setDrafts(d => [...d, {
     id: newId(),
@@ -163,11 +162,11 @@ function ManageHabits({ onDone }) {
 
   const save = async () => {
     setSaving(true)
-    const { supabase, USER_ID } = await import('../lib/supabase')
+    const { supabase } = await import('../lib/supabase')
     for (const draft of drafts) {
       if (!draft.label.trim()) continue
       const payload = {
-        user_id: USER_ID,
+        user_id: activeProfile,
         label: draft.label,
         metric_type: draft.metric_type,
         unit_label: draft.unit_label || null,
@@ -239,7 +238,4 @@ function ManageHabits({ onDone }) {
   )
 }
 
-// tiny local hook to avoid prop-drilling supabase
-function useSupabase() {
-  return {}
-}
+

@@ -12,9 +12,10 @@ import HabitTracker from './components/HabitTracker'
 import ProgressViews from './components/ProgressViews'
 import Settings from './components/Settings'
 import Nav from './components/Nav'
+import PulseOverlay from './components/PulseOverlay'
 
 export default function App() {
-  const { loadConfig, loadDailyPlan, loadHabits, loadHabitLogs, loadDriftCount } = useStore()
+  const { loadConfig, loadDailyPlan, loadHabits, loadHabitLogs, loadDriftCount, pulseVisible, pulseMode, hidePulse } = useStore()
   usePushNotifications()
 
   useEffect(() => {
@@ -28,12 +29,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app-shell">
+        {/* In-app pulse overlay — renders on top of everything */}
+        {pulseVisible && (
+          <PulseOverlay mode={pulseMode} onDismiss={hidePulse} />
+        )}
+
         <Routes>
-          {/* Breathing and alternatives are full-screen overlays — no nav */}
           <Route path="/breathing" element={<BreathingExercise />} />
           <Route path="/alternatives" element={<AlternativesScreen />} />
 
-          {/* Main app with nav */}
           <Route path="/*" element={
             <>
               <main className="main-content">

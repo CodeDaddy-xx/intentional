@@ -3,8 +3,8 @@
 
 import { useState, useEffect } from 'react'
 import { useStore } from '../hooks/useStore'
-import { supabase, USER_ID } from '../lib/supabase'
-import { format, subDays, startOfWeek, startOfMonth, eachDayOfInterval } from 'date-fns'
+import { supabase } from '../lib/supabase'
+import { format, startOfWeek, startOfMonth, eachDayOfInterval } from 'date-fns'
 
 const VIEWS = ['Day', 'Week', 'Month']
 
@@ -38,14 +38,16 @@ export default function ProgressViews() {
 // ─── DAY VIEW ────────────────────────────────────────────────────────────────
 function DayView({ habits }) {
   const [data, setData] = useState(null)
+  const { activeProfile } = useStore()
   const today = format(new Date(), 'yyyy-MM-dd')
 
   useEffect(() => {
     async function load() {
+      const uid = activeProfile
       const [logsRes, driftRes, planRes] = await Promise.all([
-        supabase.from('habit_logs').select('*').eq('user_id', USER_ID).eq('date', today),
-        supabase.from('drift_log').select('*').eq('user_id', USER_ID).eq('date', today),
-        supabase.from('daily_plan').select('*').eq('user_id', USER_ID).eq('date', today).single()
+        supabase.from('habit_logs').select('*').eq('user_id', uid).eq('date', today),
+        supabase.from('drift_log').select('*').eq('user_id', uid).eq('date', today),
+        supabase.from('daily_plan').select('*').eq('user_id', uid).eq('date', today).single()
       ])
       setData({
         logs: logsRes.data || [],
@@ -89,17 +91,19 @@ function DayView({ habits }) {
 // ─── WEEK VIEW ───────────────────────────────────────────────────────────────
 function WeekView({ habits }) {
   const [data, setData] = useState(null)
+  const { activeProfile } = useStore()
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
   const days = eachDayOfInterval({ start: weekStart, end: new Date() })
 
   useEffect(() => {
     async function load() {
+      const uid = activeProfile
       const from = format(weekStart, 'yyyy-MM-dd')
       const to = format(new Date(), 'yyyy-MM-dd')
       const [logsRes, driftRes] = await Promise.all([
-        supabase.from('habit_logs').select('*').eq('user_id', USER_ID).gte('date', from).lte('date', to),
-        supabase.from('drift_log').select('*').eq('user_id', USER_ID).gte('date', from).lte('date', to)
+        supabase.from('habit_logs').select('*').eq('user_id', uid).gte('date', from).lte('date', to),
+        supabase.from('drift_log').select('*').eq('user_id', uid).gte('date', from).lte('date', to)
       ])
       setData({ logs: logsRes.data || [], drifts: driftRes.data || [] })
     }
@@ -157,14 +161,16 @@ function WeekView({ habits }) {
 // ─── MONTH VIEW ──────────────────────────────────────────────────────────────
 function MonthView({ habits }) {
   const [data, setData] = useState(null)
+  const { activeProfile } = useStore()
 
   useEffect(() => {
     async function load() {
+      const uid = activeProfile
       const from = format(startOfMonth(new Date()), 'yyyy-MM-dd')
       const to = format(new Date(), 'yyyy-MM-dd')
       const [logsRes, driftRes] = await Promise.all([
-        supabase.from('habit_logs').select('*').eq('user_id', USER_ID).gte('date', from).lte('date', to),
-        supabase.from('drift_log').select('*').eq('user_id', USER_ID).gte('date', from).lte('date', to)
+        supabase.from('habit_logs').select('*').eq('user_id', uid).gte('date', from).lte('date', to),
+        supabase.from('drift_log').select('*').eq('user_id', uid).gte('date', from).lte('date', to)
       ])
       setData({ logs: logsRes.data || [], drifts: driftRes.data || [] })
     }

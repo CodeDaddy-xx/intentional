@@ -47,6 +47,13 @@ export const useStore = create(
       habits: [],
       habitLogs: {},
 
+      // ─── Pulse overlay ──────────────────────────────────────────────
+      pulseVisible: false,
+      pulseMode: null,   // 'focus' | 'evening'
+
+      showPulse: (mode) => set({ pulseVisible: true, pulseMode: mode }),
+      hidePulse: () => set({ pulseVisible: false, pulseMode: null }),
+
       // ─── Drift ──────────────────────────────────────────────────────
       driftCount: 0,
 
