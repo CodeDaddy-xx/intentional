@@ -138,9 +138,8 @@ function isLogged(metric_type, log) {
 // ─── MANAGE VIEW ─────────────────────────────────────────────────────────────
 function ManageHabits({ onDone }) {
   const { habits, activeProfile } = useStore()
-  const [drafts, setDrafts] = useState(
-    habits.map(h => ({ ...h }))
-  )
+  const [drafts, setDrafts] = useState(habits.map(h => ({ ...h })))
+  const [removedIds, setRemovedIds] = useState([]) // track IDs deleted from DB
   const [saving, setSaving] = useState(false)
 
   const addDraft = () => setDrafts(d => [...d, {
@@ -157,12 +156,22 @@ function ManageHabits({ onDone }) {
   const updateDraft = (id, field, val) =>
     setDrafts(d => d.map(x => x.id === id ? { ...x, [field]: val } : x))
 
-  const removeDraft = (id) =>
+  const removeDraft = (id, isNew) => {
     setDrafts(d => d.filter(x => x.id !== id))
+    // Only track for DB deletion if it was already saved (not a new unsaved draft)
+    if (!isNew) setRemovedIds(r => [...r, id])
+  }
 
   const save = async () => {
     setSaving(true)
     const { supabase } = await import('../lib/supabase')
+
+    // Delete removed habits from DB
+    for (const id of removedIds) {
+      await supabase.from('habits').delete().eq('id', id)
+    }
+
+    // Upsert remaining drafts
     for (const draft of drafts) {
       if (!draft.label.trim()) continue
       const payload = {
@@ -224,7 +233,7 @@ function ManageHabits({ onDone }) {
               />
             )}
 
-            <button className="remove-btn" onClick={() => removeDraft(draft.id)}>×</button>
+            <button className="remove-btn" onClick={() => removeDraft(draft.id, draft._new)}>×</button>
           </li>
         ))}
       </ul>
