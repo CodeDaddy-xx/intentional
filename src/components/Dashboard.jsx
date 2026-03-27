@@ -4,7 +4,7 @@ import { useStore, PROFILES } from '../hooks/useStore'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { dailyPlan, habits, habitLogs, driftCount, config, activeProfile, switchProfile } = useStore()
+  const { dailyPlan, habits, habitLogs, driftCount, config, activeProfile, switchProfile, showPulse } = useStore()
 
   const now = new Date()
   const hour = now.getHours()
@@ -101,6 +101,14 @@ export default function Dashboard() {
           🌀 I'm drifting
         </button>
       </div>
+
+      {/* Test overlay trigger — dev helper */}
+      <button
+        className="btn-test-pulse"
+        onClick={() => showPulse(isEvening ? 'evening' : 'focus')}
+      >
+        ↗ Test pulse overlay
+      </button>
     </div>
   )
 }

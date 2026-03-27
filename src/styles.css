@@ -986,9 +986,9 @@ html, body, #root {
 .btn-ghost:hover { color: var(--text); }
 
 .btn-drift {
-  background: rgba(196, 106, 90, 0.1);
+  background: rgba(212, 117, 106, 0.1);
   color: var(--danger);
-  border: 1px solid rgba(196, 106, 90, 0.3);
+  border: 1px solid rgba(212, 117, 106, 0.3);
   border-radius: var(--radius);
   padding: 12px 18px;
   font-family: var(--font-mono);
@@ -996,7 +996,23 @@ html, body, #root {
   cursor: pointer;
   transition: all 0.15s;
 }
-.btn-drift:hover { background: rgba(196, 106, 90, 0.2); }
+.btn-drift:hover { background: rgba(212, 117, 106, 0.2); }
+
+.btn-test-pulse {
+  background: none;
+  border: 1px dashed var(--border);
+  color: var(--text-dim);
+  border-radius: var(--radius);
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  letter-spacing: 0.06em;
+  transition: all 0.15s;
+}
+.btn-test-pulse:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ─── EMPTY STATE ─────────────────────────────────────────────────────────────── */
 .empty-state {

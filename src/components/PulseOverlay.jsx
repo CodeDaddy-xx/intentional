@@ -14,10 +14,12 @@ export default function PulseOverlay({ mode, onDismiss }) {
   const [visible, setVisible] = useState(false)
   const [exiting, setExiting] = useState(false)
 
-  // Animate in
+  // Animate in — double rAF ensures CSS transition actually fires
   useEffect(() => {
     playPulseSound()
-    requestAnimationFrame(() => setVisible(true))
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true))
+    })
   }, [])
 
   const dismiss = (withSound = true) => {
