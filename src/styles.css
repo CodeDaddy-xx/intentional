@@ -11,16 +11,16 @@
 :root {
   --bg:        #0c0c0c;
   --surface:   #141414;
-  --surface2:  #1c1c1c;
-  --border:    #2a2a2a;
-  --text:      #e8e4dc;
-  --text-dim:  #6b6660;
-  --text-mid:  #a09890;
-  --accent:    #c8a96e;   /* warm gold */
-  --accent2:   #7fb4a0;  /* sage green */
-  --danger:    #c46a5a;
-  --inhale:    #7fb4a0;
-  --exhale:    #6b8fa0;
+  --surface2:  #1e1e1e;
+  --border:    #303030;
+  --text:      #f0ece4;       /* brighter white */
+  --text-dim:  #8a857e;       /* was too dark, now readable */
+  --text-mid:  #c4bdb4;       /* was too dim */
+  --accent:    #d4b57a;       /* warmer gold, more pop */
+  --accent2:   #8ecbb6;       /* sage, brighter */
+  --danger:    #d4756a;
+  --inhale:    #8ecbb6;
+  --exhale:    #7a9fb0;
   --font-display: 'Fraunces', Georgia, serif;
   --font-mono:    'DM Mono', monospace;
   --radius:    8px;
@@ -32,8 +32,8 @@ html, body, #root {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -85,9 +85,10 @@ html, body, #root {
 /* ─── DASHBOARD ─────────────────────────────────────────────────────────────── */
 .dashboard-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 20px;
+  gap: 12px;
 }
 
 .greeting {
@@ -105,9 +106,38 @@ html, body, #root {
   border-radius: 20px;
   border: 1px solid var(--border);
   color: var(--text-mid);
+  margin-top: 6px;
+  display: inline-block;
 }
 .mode-badge.focus { border-color: var(--accent2); color: var(--accent2); }
 .mode-badge.evening { border-color: var(--accent); color: var(--accent); }
+
+/* Profile toggle */
+.profile-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.profile-btn {
+  background: none;
+  border: none;
+  border-radius: 16px;
+  padding: 5px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+.profile-btn.active {
+  background: var(--accent);
+  color: #0c0c0c;
+}
 
 /* Drift banner */
 .drift-banner {
@@ -151,42 +181,55 @@ html, body, #root {
   margin-bottom: 12px;
 }
 .card-header h2 {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text-mid);
   font-weight: 400;
 }
 
 .pill {
   background: var(--surface2);
   border-radius: 12px;
-  padding: 2px 8px;
-  font-size: 11px;
+  padding: 2px 9px;
+  font-size: 12px;
   color: var(--text-mid);
 }
 
-/* Task list */
+/* Task card — scrollable */
+.task-card {
+  max-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
 .task-list { list-style: none; }
+.task-list.scrollable {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
+}
+.task-list.scrollable::-webkit-scrollbar { width: 3px; }
+.task-list.scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
 .task-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 0;
+  padding: 10px 0;
   cursor: pointer;
   border-bottom: 1px solid var(--border);
   transition: opacity 0.15s;
 }
 .task-item:last-child { border-bottom: none; }
-.task-item.done { opacity: 0.4; }
+.task-item.done { opacity: 0.38; }
 .task-check {
   width: 18px;
   color: var(--accent2);
-  font-size: 12px;
+  font-size: 13px;
   flex-shrink: 0;
 }
-.task-label { font-size: 13px; }
-.task-item.done .task-label { text-decoration: line-through; }
+.task-label { font-size: 15px; color: var(--text); }
+.task-item.done .task-label { text-decoration: line-through; color: var(--text-dim); }
 
 /* Quick actions */
 .quick-actions {
@@ -212,10 +255,10 @@ html, body, #root {
   margin-bottom: 28px;
 }
 .setup-section h2 {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text-mid);
   margin-bottom: 4px;
   font-weight: 400;
 }
@@ -228,7 +271,7 @@ html, body, #root {
 }
 .section-hint {
   color: var(--text-dim);
-  font-size: 11px;
+  font-size: 12px;
   margin-bottom: 12px;
   line-height: 1.5;
 }
@@ -239,10 +282,23 @@ html, body, #root {
   gap: 8px;
   margin-bottom: 8px;
 }
+
+/* Drag handle */
+.draggable { cursor: grab; }
+.draggable:active { cursor: grabbing; opacity: 0.7; }
+.drag-handle {
+  color: var(--text-dim);
+  font-size: 14px;
+  padding-top: 10px;
+  flex-shrink: 0;
+  cursor: grab;
+  user-select: none;
+}
+
 .item-num {
   width: 18px;
   color: var(--text-dim);
-  font-size: 11px;
+  font-size: 12px;
   padding-top: 10px;
   flex-shrink: 0;
   text-align: right;
@@ -255,14 +311,14 @@ html, body, #root {
   padding: 10px 12px;
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
   transition: border-color 0.15s;
   width: 100%;
 }
 .setup-input:focus { border-color: var(--accent); }
 .setup-input.small { max-width: 100px; }
-.setup-input.first-step { font-size: 12px; color: var(--text-mid); }
+.setup-input.first-step { font-size: 13px; color: var(--text-mid); }
 
 .downtime-item { align-items: flex-start; }
 .downtime-inputs { flex: 1; display: flex; flex-direction: column; gap: 6px; }
@@ -468,8 +524,8 @@ html, body, #root {
   text-align: right;
 }
 .option-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.option-label { font-size: 14px; color: var(--text); }
-.option-step { font-size: 11px; color: var(--text-dim); }
+.option-label { font-size: 15px; color: var(--text); }
+.option-step { font-size: 12px; color: var(--text-dim); }
 .option-check { color: var(--accent2); font-size: 14px; flex-shrink: 0; }
 
 .quote {
@@ -542,9 +598,9 @@ html, body, #root {
   justify-content: space-between;
   margin-bottom: 10px;
 }
-.habit-label { font-size: 14px; }
+.habit-label { font-size: 15px; }
 .metric-type-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-dim);
   background: var(--surface2);
   border-radius: 10px;
@@ -740,10 +796,10 @@ html, body, #root {
 }
 .settings-section:last-of-type { border-bottom: none; }
 .settings-section h2 {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text-mid);
   margin-bottom: 14px;
   font-weight: 400;
 }

@@ -1,12 +1,10 @@
 // src/components/Dashboard.jsx
-// Today's view: mode indicator, tasks, habits summary, drift count
-
 import { useNavigate } from 'react-router-dom'
-import { useStore } from '../hooks/useStore'
+import { useStore, PROFILES } from '../hooks/useStore'
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { dailyPlan, habits, habitLogs, driftCount, config } = useStore()
+  const { dailyPlan, habits, habitLogs, driftCount, config, activeProfile, switchProfile } = useStore()
 
   const now = new Date()
   const hour = now.getHours()
@@ -33,9 +31,23 @@ export default function Dashboard() {
     <div className="page dashboard">
       {/* Header */}
       <div className="dashboard-header">
-        <h1 className="greeting">Good {greeting}</h1>
-        <div className={`mode-badge ${isEvening ? 'evening' : 'focus'}`}>
-          {modeEmoji} {mode} Mode
+        <div>
+          <h1 className="greeting">Good {greeting}</h1>
+          <div className={`mode-badge ${isEvening ? 'evening' : 'focus'}`}>
+            {modeEmoji} {mode} Mode
+          </div>
+        </div>
+        {/* Profile toggle */}
+        <div className="profile-toggle">
+          {PROFILES.map(p => (
+            <button
+              key={p.id}
+              className={`profile-btn ${activeProfile === p.id ? 'active' : ''}`}
+              onClick={() => activeProfile !== p.id && switchProfile(p.id)}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -50,8 +62,8 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Tasks */}
-      <section className="card">
+      {/* Tasks — scrollable, fixed height */}
+      <section className="card task-card">
         <div className="card-header">
           <h2>Today's tasks</h2>
           <span className="pill">{doneTasks}/{tasks.length}</span>
@@ -61,7 +73,7 @@ export default function Dashboard() {
             + Set your tasks for today
           </button>
         ) : (
-          <ul className="task-list">
+          <ul className="task-list scrollable">
             {tasks.map(task => (
               <TaskItem key={task.id} task={task} />
             ))}
@@ -80,15 +92,12 @@ export default function Dashboard() {
         </button>
       </section>
 
-      {/* Quick actions */}
+      {/* Quick actions — always visible */}
       <div className="quick-actions">
         <button className="btn-secondary" onClick={() => navigate('/morning')}>
           ✏️ Edit today's plan
         </button>
-        <button
-          className="btn-drift"
-          onClick={() => navigate('/breathing')}
-        >
+        <button className="btn-drift" onClick={() => navigate('/breathing')}>
           🌀 I'm drifting
         </button>
       </div>
