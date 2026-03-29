@@ -53,7 +53,12 @@ function getLine(tone, driftCount) {
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  // Vercel cron passes Authorization header — verify it
+  // Accept POST only to avoid Vercel GET caching
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  // Verify authorization
   const authHeader = req.headers.authorization
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' })
